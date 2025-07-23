@@ -1,0 +1,35 @@
+# dependencias
+/node_modules
+/.pnp
+.pnp.js
+
+# producción
+/build
+
+# entorno
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# testing
+/coverage
+
+# VSCode
+.vscode/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# sistema
+.DS_Store
+Thumbs.db
+
+# lockfiles
+package-lock.json
+
+# Git
+.git/
