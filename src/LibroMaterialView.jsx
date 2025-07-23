@@ -1,5 +1,5 @@
 // LibroMaterialView.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ const LibroMaterialView = ({ usuarioActual, setEstaLogueado, setUsuarioActual })
   const [fechaPublicacion, setFechaPublicacion] = useState('');
   const [editandoId, setEditandoId] = useState(null);
 
-  const obtenerLibros = async () => {
+  const obtenerLibros = useCallback(async () => {
     try {
       const token = sessionStorage.getItem('accessToken');
       if (!token) throw new Error('No hay token de autorización');
@@ -32,18 +32,17 @@ const LibroMaterialView = ({ usuarioActual, setEstaLogueado, setUsuarioActual })
         cerrarSesion();
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     obtenerLibros();
-  }, []);
+  }, [obtenerLibros]);
 
   const validarFormulario = () => {
     if (!titulo.trim() || !fechaPublicacion.trim()) {
       alert('Todos los campos son obligatorios.');
       return false;
     }
-    // Puedes agregar más validaciones si quieres
     return true;
   };
 
@@ -60,59 +59,57 @@ const LibroMaterialView = ({ usuarioActual, setEstaLogueado, setUsuarioActual })
     navigate('/');
   };
 
-const crearLibro = async () => {
-  if (!validarFormulario()) return;
+  const crearLibro = async () => {
+    if (!validarFormulario()) return;
 
-  try {
-    const token = sessionStorage.getItem('accessToken');
-    const fechaISO = new Date(fechaPublicacion).toISOString();
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      const fechaISO = new Date(fechaPublicacion).toISOString();
 
-    await axios.post(
-      API_URL,
-      {
-        titulo,
-        fechaPublicacion: fechaISO,
-        autorLibro: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // valor fijo
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    obtenerLibros();
-    limpiarFormulario();
-  } catch (error) {
-    console.error(error);
-    alert('Error al crear libro.');
-  }
-};
+      await axios.post(
+        API_URL,
+        {
+          titulo,
+          fechaPublicacion: fechaISO,
+          autorLibro: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      obtenerLibros();
+      limpiarFormulario();
+    } catch (error) {
+      console.error(error);
+      alert('Error al crear libro.');
+    }
+  };
 
+  const actualizarLibro = async () => {
+    if (!validarFormulario()) return;
 
-const actualizarLibro = async () => {
-  if (!validarFormulario()) return;
+    try {
+      const token = sessionStorage.getItem('accessToken');
+      const fechaISO = new Date(fechaPublicacion).toISOString();
 
-  try {
-    const token = sessionStorage.getItem('accessToken');
-    const fechaISO = new Date(fechaPublicacion).toISOString();
-
-    await axios.put(
-      `${API_URL}/${editandoId}`,
-      {
-        titulo,
-        fechaPublicacion: fechaISO,
-        autorLibro: '3fa85f64-5717-4562-b3fc-2c963f66afa6', // valor fijo
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    obtenerLibros();
-    limpiarFormulario();
-  } catch (error) {
-    console.error(error);
-    alert('Error al actualizar libro.');
-  }
-};
-
+      await axios.put(
+        `${API_URL}/${editandoId}`,
+        {
+          titulo,
+          fechaPublicacion: fechaISO,
+          autorLibro: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      obtenerLibros();
+      limpiarFormulario();
+    } catch (error) {
+      console.error(error);
+      alert('Error al actualizar libro.');
+    }
+  };
 
   const eliminarLibro = async (id) => {
     if (!window.confirm('¿Seguro que deseas eliminar este libro?')) return;
