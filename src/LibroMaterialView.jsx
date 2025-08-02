@@ -404,7 +404,6 @@ const LibroMaterialView = ({ usuarioActual, setEstaLogueado, setUsuarioActual })
         /* Ocultar columna ID */
         thead th:nth-child(1),
         tbody td:nth-child(1) {
-          display: none;
         }
 
         tbody tr {
@@ -539,7 +538,6 @@ const LibroMaterialView = ({ usuarioActual, setEstaLogueado, setUsuarioActual })
           }
           tbody td:nth-of-type(1):before {
             content: ''; /* ID oculto */
-            display: none;
           }
           tbody td:nth-of-type(2):before {
             content: 'Título';
